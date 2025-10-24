@@ -1,0 +1,123 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNSF0M2/11kPn2YWwCyrkG6",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Murillocarlosp/Marcotti-SqlAlchemy/blob/main/Marcotti-SqlAlchemy\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        " !pip install sqlalchemy"
+      ],
+      "metadata": {
+        "id": "j0iT3jz1dZkf",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "outputId": "fb50fd21-5057-4093-b351-f2bdff906c50"
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: sqlalchemy in /usr/local/lib/python3.12/dist-packages (2.0.44)\n",
+            "Requirement already satisfied: greenlet>=1 in /usr/local/lib/python3.12/dist-packages (from sqlalchemy) (3.2.4)\n",
+            "Requirement already satisfied: typing-extensions>=4.6.0 in /usr/local/lib/python3.12/dist-packages (from sqlalchemy) (4.15.0)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sqlalchemy import create_engine, Column, Integer, String, Date, Float, Time, ForeignKey\n",
+        "from sqlalchemy.ext.declarative import declarative_base\n",
+        "from sqlalchemy.orm import sessionmaker\n",
+        "\n",
+        "Base = declarative_base()\n",
+        "\n",
+        "# Suas classes (exatamente como você tinha)\n",
+        "class Funcionario(Base):\n",
+        "    __tablename__ = 'Funcionarios'\n",
+        "\n",
+        "    id_funcionario = Column(Integer, primary_key=True, autoincrement=True)\n",
+        "    nome = Column(String(100), nullable=False)\n",
+        "    cargo = Column(String(50), nullable=False)\n",
+        "    data_admissao = Column(Date, nullable=False)\n",
+        "    salario = Column(Float, nullable=False)\n",
+        "\n",
+        "class EscalaTrabalho(Base):\n",
+        "    __tablename__ = 'EscalaTrabalho'\n",
+        "\n",
+        "    id_escala = Column(Integer, primary_key=True, autoincrement=True)\n",
+        "    id_funcionario = Column(Integer, ForeignKey('Funcionarios.id_funcionario'), nullable=False)\n",
+        "    dia_semana = Column(String(20), nullable=False)\n",
+        "    hora_inicio = Column(Time, nullable=False)\n",
+        "    hora_fim = Column(Time, nullable=False)\n",
+        "    tipo_turno = Column(String(20), nullable=False)\n",
+        "\n",
+        "# Criar banco de dados SQLite na memória (ou arquivo)\n",
+        "engine = create_engine('sqlite:///empresa.db')  # Arquivo\n",
+        "# engine = create_engine('sqlite:///:memory:')  # Memória RAM (dados temporários)\n",
+        "\n",
+        "# Criar todas as tabelas\n",
+        "Base.metadata.create_all(engine)\n",
+        "\n",
+        "# Criar sessão\n",
+        "Session = sessionmaker(bind=engine)\n",
+        "session = Session()\n",
+        "\n",
+        "print(\"✅ Banco de dados criado com sucesso no Colab!\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "B1B3ycBeNc1V",
+        "outputId": "9be903ba-a638-4cd2-e9f4-7446dd7fd868"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "✅ Banco de dados criado com sucesso no Colab!\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/tmp/ipython-input-2799620144.py:5: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)\n",
+            "  Base = declarative_base()\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
